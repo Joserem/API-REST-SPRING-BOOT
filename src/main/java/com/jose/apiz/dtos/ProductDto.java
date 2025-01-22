@@ -1,5 +1,5 @@
 package com.jose.apiz.dtos;
 
-public record ProductDto() {
+public record ProductDto(String name, Long price) {
 
 }

@@ -1,5 +1,4 @@
 package com.jose.apiz.model;
-
 import jakarta.persistence.*;
 
 @Entity(name = "product")
@@ -7,7 +6,7 @@ import jakarta.persistence.*;
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
     private Long price;

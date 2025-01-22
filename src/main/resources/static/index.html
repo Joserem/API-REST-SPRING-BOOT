@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestão de Navios</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    form {
+      margin-bottom: 20px;
+    }
+    input {
+      margin-right: 10px;
+    }
+    button {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    .btn-edit {
+      color: blue;
+      cursor: pointer;
+    }
+    .btn-delete {
+      color: red;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Gestão de Navios</h1>
+
+  <!-- Formulário para adicionar ou atualizar -->
+  <form id="productForm">
+    <input type="hidden" id="productId" />
+    <input type="text" id="productName" placeholder="Nome do Produto" required />
+    <input type="number" id="productPrice" placeholder="Preço" required />
+    <button type="submit">Salvar</button>
+    <button type="button" id="clearForm">Limpar</button>
+  </form>
+
+  <!-- Tabela de produtos -->
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Preço</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="productTableBody">
+      <!-- Produtos serão carregados aqui -->
+    </tbody>
+  </table>
+
+  <script>
+    const apiUrl = "/products";
+    const productForm = document.getElementById("productForm");
+    const productIdInput = document.getElementById("productId");
+    const productNameInput = document.getElementById("productName");
+    const productPriceInput = document.getElementById("productPrice");
+    const productTableBody = document.getElementById("productTableBody");
+    const clearFormButton = document.getElementById("clearForm");
+
+    // Carrega os produtos ao iniciar
+    document.addEventListener("DOMContentLoaded", loadProducts);
+
+    // Enviar formulário (salvar ou atualizar)
+    productForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const id = productIdInput.value;
+      const name = productNameInput.value;
+      const price = productPriceInput.value;
+
+      const method = id ? "PUT" : "POST";
+      const url = id ? `${apiUrl}/${id}` : apiUrl;
+
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, price }),
+      });
+
+      if (response.ok) {
+        alert("Produto salvo com sucesso!");
+        loadProducts();
+        clearForm();
+      } else {
+        alert("Erro ao salvar o produto.");
+      }
+    });
+
+    // Limpar formulário
+    clearFormButton.addEventListener("click", clearForm);
+
+    function clearForm() {
+      productIdInput.value = "";
+      productNameInput.value = "";
+      productPriceInput.value = "";
+    }
+
+    // Carregar produtos
+    async function loadProducts() {
+      const response = await fetch(apiUrl);
+      const products = await response.json();
+
+      productTableBody.innerHTML = products
+        .map(
+          (product) => `
+        <tr>
+          <td>${product.id}</td>
+          <td>${product.name}</td>
+          <td>${product.price}</td>
+          <td>
+            <span class="btn-edit" onclick="editProduct(${product.id}, '${product.name}', ${product.price})">Editar</span> |
+            <span class="btn-delete" onclick="deleteProduct(${product.id})">Deletar</span>
+          </td>
+        </tr>`
+        )
+        .join("");
+    }
+
+    // Editar produto
+    function editProduct(id, name, price) {
+      productIdInput.value = id;
+      productNameInput.value = name;
+      productPriceInput.value = price;
+    }
+
+    // Deletar produto
+    async function deleteProduct(id) {
+      if (confirm("Deseja realmente excluir este produto?")) {
+        const response = await fetch(`${apiUrl}/${id}`, { method: "DELETE" });
+        if (response.ok) {
+          alert("Produto excluído com sucesso!");
+          loadProducts();
+        } else {
+          alert("Erro ao excluir o produto.");
+        }
+      }
+    }
+  </script>
+</body>
+</html>

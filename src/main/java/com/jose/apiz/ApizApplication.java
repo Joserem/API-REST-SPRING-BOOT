@@ -9,3 +9,4 @@ public class ApizApplication {
 	public static void main(String[] args) { SpringApplication.run(ApizApplication.class, args);}
 
 }
+ 
