@@ -1,0 +1,6 @@
+package com.jose.apiz.repositories;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.jose.apiz.model.TipoCarga;
+
+public interface TipoCargaRepository extends JpaRepository<TipoCarga, Integer> {}

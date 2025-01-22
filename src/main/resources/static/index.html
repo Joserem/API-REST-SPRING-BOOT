@@ -1,162 +1,260 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gestão de Navios</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-    table, th, td {
-      border: 1px solid #ddd;
-    }
-    th, td {
-      padding: 8px;
-      text-align: center;
-    }
-    th {
-      background-color: #f4f4f4;
-    }
-    form {
-      margin-bottom: 20px;
-    }
-    input {
-      margin-right: 10px;
-    }
-    button {
-      padding: 5px 10px;
-      cursor: pointer;
-    }
-    .btn-edit {
-      color: blue;
-      cursor: pointer;
-    }
-    .btn-delete {
-      color: red;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestão</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background-color: #333;
+            padding: 10px 0;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        nav a:hover, nav a.active {
+            background-color: #575757;
+        }
+        .content {
+            padding: 20px;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Gestão de Navios</h1>
 
-  <!-- Formulário para adicionar ou atualizar -->
-  <form id="productForm">
-    <input type="hidden" id="productId" />
-    <input type="text" id="productName" placeholder="Nome do Produto" required />
-    <input type="number" id="productPrice" placeholder="Preço" required />
-    <button type="submit">Salvar</button>
-    <button type="button" id="clearForm">Limpar</button>
-  </form>
+<nav>
+    <a href="#" class="tab-link active" data-tab="viagens">Viagens</a>
+    <a href="#" class="tab-link" data-tab="navios">Navios</a>
+    <a href="#" class="tab-link" data-tab="tipos-carga">Tipos de Carga</a>
+    <a href="#" class="tab-link" data-tab="usuarios">Usuários</a>
+</nav>
 
-  <!-- Tabela de produtos -->
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Nome</th>
-        <th>Preço</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody id="productTableBody">
-      <!-- Produtos serão carregados aqui -->
-    </tbody>
-  </table>
+<div class="content">
+    <!-- Viagens -->
+    <div id="viagens" class="tab-content active">
+        <h2>Viagens</h2>
+        <form id="form-viagens">
+            <input type="text" placeholder="ID do Navio" name="idNavio" required>
+            <input type="text" placeholder="Status da Viagem" name="statusViagem" required>
+            <input type="text" placeholder="ID do Berço" name="idBerco" required>
+            <input type="text" placeholder="Tipo de Carga" name="tipoCarga" required>
+            <button type="submit">Salvar Viagem</button>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>ID do Navio</th>
+                    <th>Status</th>
+                    <th>ID do Berço</th>
+                    <th>Tipo de Carga</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="table-viagens"></tbody>
+        </table>
+    </div>
 
-  <script>
-    const apiUrl = "/products";
-    const productForm = document.getElementById("productForm");
-    const productIdInput = document.getElementById("productId");
-    const productNameInput = document.getElementById("productName");
-    const productPriceInput = document.getElementById("productPrice");
-    const productTableBody = document.getElementById("productTableBody");
-    const clearFormButton = document.getElementById("clearForm");
+    <!-- Navios -->
+    <div id="navios" class="tab-content">
+        <h2>Navios</h2>
+        <form id="form-navios">
+            <input type="text" placeholder="Nome do Navio" name="nomeNavioClasse" required>
+            <input type="text" placeholder="Descrição" name="descricao" required>
+            <button type="submit">Salvar Navio</button>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome do Navio</th>
+                    <th>Descrição</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="table-navios"></tbody>
+        </table>
+    </div>
 
-    // Carrega os produtos ao iniciar
-    document.addEventListener("DOMContentLoaded", loadProducts);
+    <!-- Tipos de Carga -->
+    <div id="tipos-carga" class="tab-content">
+        <h2>Tipos de Carga</h2>
+        <form id="form-tipos-carga">
+            <input type="text" placeholder="Descrição do Tipo de Carga" name="descricao" required>
+            <button type="submit">Salvar Tipo de Carga</button>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Descrição</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="table-tipos-carga"></tbody>
+        </table>
+    </div>
 
-    // Enviar formulário (salvar ou atualizar)
-    productForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const id = productIdInput.value;
-      const name = productNameInput.value;
-      const price = productPriceInput.value;
+    <!-- Usuários -->
+    <div id="usuarios" class="tab-content">
+        <h2>Usuários</h2>
+        <form id="form-usuarios">
+            <input type="text" placeholder="Nome do Usuário" name="nomeUsuario" required>
+            <input type="email" placeholder="Email" name="email" required>
+            <button type="submit">Salvar Usuário</button>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="table-usuarios"></tbody>
+        </table>
+    </div>
+</div>
 
-      const method = id ? "PUT" : "POST";
-      const url = id ? `${apiUrl}/${id}` : apiUrl;
+<script>
+    const API_URL = "http://localhost:8080";
 
-      const response = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, price }),
-      });
+    async function fetchAndPopulate(entity) {
+        const response = await fetch(`${API_URL}/${entity}`);
+        const data = await response.json();
+        const tableBody = document.getElementById(`table-${entity}`);
+        tableBody.innerHTML = "";
 
-      if (response.ok) {
-        alert("Produto salvo com sucesso!");
-        loadProducts();
-        clearForm();
-      } else {
-        alert("Erro ao salvar o produto.");
-      }
+        data.forEach(item => {
+            const row = document.createElement("tr");
+            Object.values(item).forEach(value => {
+                const cell = document.createElement("td");
+                cell.textContent = value;
+                row.appendChild(cell);
+            });
+
+            const actions = document.createElement("td");
+            actions.innerHTML = `<button onclick="editItem('${entity}', ${item.id})">Editar</button>
+                                 <button onclick="deleteItem('${entity}', ${item.id})">Deletar</button>`;
+            row.appendChild(actions);
+
+            tableBody.appendChild(row);
+        });
+    }
+
+    async function deleteItem(entity, id) {
+        if (confirm("Tem certeza que deseja deletar?")) {
+            await fetch(`${API_URL}/${entity}/${id}`, { method: "DELETE" });
+            fetchAndPopulate(entity);
+        }
+    }
+
+    async function editItem(entity, id) {
+        const response = await fetch(`${API_URL}/${entity}/${id}`);
+        const data = await response.json();
+
+        const form = document.getElementById(`form-${entity}`);
+        Object.keys(data).forEach(key => {
+            if (form[key]) form[key].value = data[key];
+        });
+
+        form.onsubmit = async event => {
+            event.preventDefault();
+            const formData = new FormData(form);
+            const jsonData = Object.fromEntries(formData.entries());
+
+            await fetch(`${API_URL}/${entity}/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(jsonData)
+            });
+            fetchAndPopulate(entity);
+            form.reset();
+            form.onsubmit = addItem(entity);
+        };
+    }
+
+    async function addItem(entity) {
+        const form = document.getElementById(`form-${entity}`);
+        form.onsubmit = async event => {
+            event.preventDefault();
+            const formData = new FormData(form);
+            const jsonData = Object.fromEntries(formData.entries());
+
+            await fetch(`${API_URL}/${entity}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(jsonData)
+            });
+            fetchAndPopulate(entity);
+            form.reset();
+        };
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        ["viagens", "navios", "tipos-carga", "usuarios"].forEach(entity => {
+            fetchAndPopulate(entity);
+            addItem(entity);
+        });
     });
 
-    // Limpar formulário
-    clearFormButton.addEventListener("click", clearForm);
+    // Alternar abas
+    const tabs = document.querySelectorAll('.tab-link');
+    const tabContents = document.querySelectorAll('.tab-content');
 
-    function clearForm() {
-      productIdInput.value = "";
-      productNameInput.value = "";
-      productPriceInput.value = "";
-    }
+    tabs.forEach(tab => {
+        tab.addEventListener('click', event => {
+            event.preventDefault();
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
 
-    // Carregar produtos
-    async function loadProducts() {
-      const response = await fetch(apiUrl);
-      const products = await response.json();
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
 
-      productTableBody.innerHTML = products
-        .map(
-          (product) => `
-        <tr>
-          <td>${product.id}</td>
-          <td>${product.name}</td>
-          <td>${product.price}</td>
-          <td>
-            <span class="btn-edit" onclick="editProduct(${product.id}, '${product.name}', ${product.price})">Editar</span> |
-            <span class="btn-delete" onclick="deleteProduct(${product.id})">Deletar</span>
-          </td>
-        </tr>`
-        )
-        .join("");
-    }
+            document.getElementById(tab.dataset.tab).classList.add('active');
+        });
+    });
+</script>
 
-    // Editar produto
-    function editProduct(id, name, price) {
-      productIdInput.value = id;
-      productNameInput.value = name;
-      productPriceInput.value = price;
-    }
-
-    // Deletar produto
-    async function deleteProduct(id) {
-      if (confirm("Deseja realmente excluir este produto?")) {
-        const response = await fetch(`${apiUrl}/${id}`, { method: "DELETE" });
-        if (response.ok) {
-          alert("Produto excluído com sucesso!");
-          loadProducts();
-        } else {
-          alert("Erro ao excluir o produto.");
-        }
-      }
-    }
-  </script>
 </body>
 </html>
